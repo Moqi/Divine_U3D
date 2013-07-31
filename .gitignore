@@ -1,0 +1,12 @@
+# Unity3d .gitignore
+*.sln
+*.csproj
+Library
+Temp
+
+# VS2010
+*.suo
+*.pidb
+*.userprefs
+bin
+obj
