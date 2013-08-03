@@ -1,0 +1,4 @@
+<Levels>
+  <Level ImageFile="1" Name="Lotus" ConfigFile="1" SongFile="1" SongPreview="s1" SweepOnceTime="1.3333333"/>
+  <Level ImageFile="2" Name="Divine Service" ConfigFile="2" SongFile="2" SongPreview="s2" SweepOnceTime="1"/>
+</Levels>

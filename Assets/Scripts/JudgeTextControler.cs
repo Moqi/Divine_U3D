@@ -12,7 +12,7 @@ public class JudgeTextControler : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-		
+	
 	}
 	
 	// Update is called once per frame
@@ -33,5 +33,4 @@ public class JudgeTextControler : MonoBehaviour {
 		Vector3 pos3 = new Vector3(pos.x,pos.y,transform.position.z);
 		transform.position = pos3;
 	}
-	
 }

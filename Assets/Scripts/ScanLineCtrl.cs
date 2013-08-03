@@ -14,13 +14,13 @@ public class ScanLineCtrl : MonoBehaviour {
 	private bool		isVisible;
 	
 	void Start () {
-		//Vector3 cur_pos = transform.position;
-		//transform.Translate(0,-cur_pos.y,0,Space.World);
-		//scanTurnTime = Global.sweepOnceTime;
-		//scanRangeTop = Screen.height - Global.GamingZoneTop; // 800
-		////scanRangeTop = 0.1f;
-		//scanRangeBottom = Screen.height - Global.GamingZoneBottom; // 100
-		////scanRangeBottom = 0.35f;
+		Vector3 cur_pos = transform.position;
+		transform.Translate(0,-cur_pos.y,0,Space.World);
+		scanTurnTime = Global.sweepOnceTime;
+		scanRangeTop = Screen.height - Global.GamingZoneTop; // 800
+		//scanRangeTop = 0.1f;
+		scanRangeBottom = Screen.height - Global.GamingZoneBottom; // 100
+		//scanRangeBottom = 0.35f;
 		
 		drawRect = new Rect(0, 0, Screen.width, scanLineImgHeight);
 	}

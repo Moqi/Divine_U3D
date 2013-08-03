@@ -22,6 +22,33 @@ abstract class PlaneEffectTexture
 	}
 }
 
+class PlaneEffectTextureTile : PlaneEffectTexture
+{
+	private int numTex;
+	private Texture2D tex;
+	private int texUnitWidth;
+	private int texUnitHeight;
+	public PlaneEffectTextureTile(Texture2D tileTex,int numTex,int texUnitWidth,int texUnitHeight)
+	{
+		tex = tileTex;
+		Type = PlaneEffectTextureType.TEXTURE_TYPE_TILE;
+		this.numTex = numTex;
+		this.texUnitWidth = texUnitWidth;
+		this.texUnitHeight = texUnitHeight;
+	}
+	public override void SetTextureWithIndex(Renderer renderer,int idx)
+	{
+		
+	}
+	public override int Length
+	{
+		get
+		{
+			return numTex;
+		}
+	}
+}
+
 class PlaneEffectTextureArray : PlaneEffectTexture
 {
 	private Texture2D[] texs;
@@ -176,6 +203,72 @@ class FailedTapPlaneEffecter : PlaneEffecter
 	}
 }
 
+
+
+/*
+public class Effecter
+{
+	private Texture2D[] fragments;
+	private GUITexture target;
+	private int beginFragID;
+	private int interval;
+	private int curFragNum;
+	private bool loopPlay;
+	Rect oldPixelInset;
+	float scale;
+	
+	public Effecter(GUITexture target,Texture2D[] frags,int beginFragID,int interval, bool isLoop,float scale)
+	{
+		this.target = target;
+		this.fragments = frags;
+		this.beginFragID = beginFragID;
+		this.interval = interval;
+		this.loopPlay = isLoop;
+		curFragNum = beginFragID*(interval+1);
+		this.scale = scale;
+		oldPixelInset = target.pixelInset;
+	}
+	public bool Update(float alpha)
+	{
+		int totFragNum = (fragments.Length-1)*(interval+1)+1;
+		Rect rect = new Rect(oldPixelInset.x*scale,oldPixelInset.y*scale,oldPixelInset.width*scale,oldPixelInset.height*scale);
+		target.pixelInset = rect;
+		if (fragments.Length<=0||curFragNum>=totFragNum)
+		{
+			if (this.loopPlay)
+			{
+				curFragNum = beginFragID * (interval + 1);
+				if (curFragNum>=totFragNum)
+				{
+					return false;
+				}
+			}else {
+				target.pixelInset = oldPixelInset;
+				return false;
+			}
+		}
+		int curFragID = curFragNum/(interval+1);
+		target.texture = fragments[curFragID];
+		Color color = target.color;
+		color.a = alpha;
+		target.color = color;
+		curFragNum++;
+		return true;
+	}
+	
+	public bool IsEffectFinished()
+	{
+		int totFragNum = (fragments.Length-1)*(interval+1)+1;
+		if (loopPlay==false&&curFragNum>=totFragNum)
+			return true;
+		else return false;
+	}
+}
+
+
+
+
+ */
 public class TapPointPlane : MonoBehaviour {
 	
 	public int radius;
@@ -304,6 +397,7 @@ public class TapPointPlane : MonoBehaviour {
 		int len = Input.touches.Length;
 		if (len>0)
 		{
+			string debugLog = len.ToString();
 			for (int i=0;i<len;i++)
 			{
 				Vector2 hitPnt = Input.touches[i].position;

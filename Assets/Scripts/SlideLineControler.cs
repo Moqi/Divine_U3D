@@ -18,10 +18,8 @@ public class SlideLineControler : MonoBehaviour {
 	
 	public void SetEndPnts(Vector2 p1,Vector2 p2)
 	{
-		//string str = p1.ToString()+p2.ToString();
-		//p1 = p1 + (p2-p1).normalized*Global.TapPointVisiableRadius;
-		//p2 = p2 + (p1-p2).normalized*Global.TapPointVisiableRadius;
-		//str += p1.ToString()+p2.ToString();
+		p1 = p1 + (p2-p1).normalized*Global.TapPointVisiableRadius;
+		p2 = p2 + (p1-p2).normalized*Global.TapPointVisiableRadius;
 		if (p1.y<p2.y) 
 		{
 			Vector2 tmp = p1;
@@ -38,14 +36,7 @@ public class SlideLineControler : MonoBehaviour {
 		transform.position = newPos;
 		Vector2 currDir = new Vector2(0.0f,1.0f);
 		Vector2 tarDir = (p1-p2).normalized;
-		//str+=tarDir.ToString();
 		//Debug.Log(tarDir.ToString());
-		Vector3 cross = Vector3.Cross(currDir, tarDir);
-		
 		angle = Vector2.Angle(currDir,tarDir);
-		if (cross.z > 0)
-    	angle = 360 - angle;
-		//str+=angle.ToString();
-		//Debug.Log(str);
 	}
 }

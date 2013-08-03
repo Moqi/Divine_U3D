@@ -13,21 +13,33 @@ public struct LevelInfo {
 	
 public enum TapResult : int 
 {
-	TAP_RESULT_UNKNOW	= 0,
-	TAP_RESULT_MISS		= 1,
-	TAP_RESULT_BAD		= 2,
-	TAP_RESULT_GOOD		= 3,
-	TAP_RESULT_PERFECT	= 4
+	TAP_RESULT_UNKNOW = 0,
+	TAP_RESULT_MISS = 1,
+	TAP_RESULT_BAD = 2,
+	TAP_RESULT_GOOD = 3,
+	TAP_RESULT_PERFECT = 4
 }
 
 public class Global : MonoBehaviour {
+	//for skip
+	public static bool Skip = false;
 	
-	// Level Info
 	static LevelInfo[] levelInfos;
 	static int levelCount;
 	static int curLevelIndex = 0;
+	public static float sweepOnceTime = 1.3333333f;
 	
-	// Final Result
+	public static float TimeFrmAppear2Perfect = 1.0f;
+	public static string SelectedMusicTapListFilePath = "";
+	public static float TapPointSizeBig = 120.0f;
+	public static float TapPointSizeSmall = 80.0f;
+	public static float TapPointVisiableRadius = 5.0f;
+	public static int GamingZoneHeight = Screen.height - 260;
+	public static int GamingZoneBottom = 100;
+	//from bottom to top
+	public static int GamingZoneTop = Screen.height - 160;
+	
+	//for final result
 	public static int curScore;
 	public static int curMaxCombo;
 	
@@ -40,11 +52,11 @@ public class Global : MonoBehaviour {
 	{
 		Global.curScore		= 0;
 		Global.curMaxCombo	= 0;
-
-		Global.perfectCnt	= 0;
-		Global.goodCnt		= 0;
-		Global.badCnt		= 0;
-		Global.missCnt		= 0;
+		
+		perfectCnt	= 0;
+		goodCnt		= 0;
+		badCnt		= 0;
+		missCnt		= 0;
 	}
 	
 	public static bool IsNewBest()
@@ -104,6 +116,7 @@ public class Global : MonoBehaviour {
 	public static void SetCurrentLevelIndex(int levelIndex)
 	{
 		curLevelIndex = levelIndex;
+		sweepOnceTime = levelInfos[levelIndex].sweepOnceTime;
 	}
 	
 	public static int GetCurrentLevelIndex()

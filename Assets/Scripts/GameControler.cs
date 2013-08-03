@@ -33,8 +33,7 @@ public class TapPointData
 	}
 	public float GetAppearTime()
 	{
-		//return fullScoreTime - Global.TimeFrmAppear2Perfect;
-		return 0;
+		return fullScoreTime - Global.TimeFrmAppear2Perfect;
 	}
 	
 	public TapResult GetTapResult()
@@ -49,8 +48,14 @@ public class GameControler : MonoBehaviour {
 	public TapPointPlane tapPoint;
 	private float startTime;
 	private SortedList<int, TapPointData> tapPntQue;
+	//private List<TapPoint> livingTapPnts;
 
+	private LevelLoader levelLoader;
+	
+	//public TapPoint tp; 
+	//private float curTime;
 	public ScanLineCtrl	scanLine;
+	//public SlideLineControler slideLineControler;
 	public MusicPlayer musicPlayer;
 	public ScoreLabel scoreLabel;
 	
@@ -58,81 +63,120 @@ public class GameControler : MonoBehaviour {
 	
 	private float		gameStartTime;
 	
+	// Use this for initialization
 	void Start () {
+		
+		tapPntQue = GetMusicTapList(Global.SelectedMusicTapListFilePath);
+		//livingTapPnts = new List<TapPoint>();
+		/*tapPoint = Instantiate(tapPoint) as TapPoint;
+		tapPoint.SetPos(new Vector2(100,100));
+		tapPoint.SetFullScoreTime(5);*/
 		
 		LevelInfo levelInfo = Global.GetLevelInfo(Global.GetCurrentLevelIndex());
 		
-		musicPlayer	= Instantiate(musicPlayer) as MusicPlayer;
-		scanLine	= Instantiate(scanLine) as ScanLineCtrl;
-		scoreLabel	= Instantiate(scoreLabel) as ScoreLabel;
-		tapPntQue	= LoadLevel("Data/" + levelInfo.beatListFile);
+		musicPlayer = Instantiate(musicPlayer) as MusicPlayer;
+		musicPlayer.Load("Music/" + levelInfo.songFile);
 		
 		startTime = Time.realtimeSinceStartup;
-		
-		musicPlayer.Load("Music/" + levelInfo.songFile);
+		scanLine = Instantiate(scanLine) as ScanLineCtrl;
+		//scanLine.transform.Translate(0,10000,0,Space.World);
+		//scanLine.gameObject.SetActive(false);
 		scanLine.SetVisible(false);
+		
+		scoreLabel = Instantiate(scoreLabel) as ScoreLabel;
 		scoreLabel.SetVisible(true);
+		
+		levelLoader = new LevelLoader();//AddComponent(DataLoader);
+		tapPntQue = levelLoader.LoadLevel("Data/" + levelInfo.beatListFile);
+		
 		
 		for (int idx = 0; idx <=60;idx++)
 		{
 			string strIdx = idx.ToString("D3");
-			Resources.Load("Image/Effects/NewSucceedTap/SuccessTap_"+strIdx, typeof(Texture2D));
+			Texture2D tex = 
+				(Texture2D)Resources.Load("Image/Effects/NewSucceedTap/SuccessTap_"+strIdx,typeof(Texture2D));
 		}
-
+	
+		//slideLineControler = Instantiate(slideLineControler) as SlideLineControler;
+		//slideLineControler.SetEndPnts(new Vector2(100.0f,170.0f),new Vector2(200.0f,240.0f));
+		
+		//musicPlayer.Play();
+		
+		/*TapPoint[] tps = new TapPoint[5];
+		for (int i=0;i<5;i++)
+		{
+			tps[i] = Instantiate(tp) as TapPoint;
+			tps[i].SetPos(new Vector2(i*10,0));
+		}*/
 	}
 	
-	Queue<int> waitingForRemove = new Queue<int>();
+	void OnGUI()
+	{
+		//GUILayout.Label(musicPlayer.GetPlayTime().ToString());
+	}
+	
+	void CleanUp()
+	{
+		
+	}
 	
 	// Update is called once per frame
 	void Update () {
-
-		if (isInGame && Input.GetKeyDown(KeyCode.Escape))
+		
+		if (Input.GetKeyDown(KeyCode.Escape))
 		{
-			LeaveGame("List");
+			Debug.Log("Key: Back");
+			LeaveGame("MusicList");
+		}
+		else if (Input.GetKeyDown(KeyCode.Home))
+		{
+			
 		}
 		
-		//float curTime = Time.realtimeSinceStartup;
-		//if (curTime > startTime + readyDuration)
-		//{
-		//    if ((!isInGame) && !musicPlayer.IsPlaying())
-		//    {
-		//        isInGame = true;
-		//        gameStartTime = Time.time;
-		//        musicPlayer.Play();
-		//    }
-		//    scanLine.SetVisible(true);
-
-		//    scanLine.SetPosByTime(Time.time - gameStartTime);
-		//    float deltaTime = curTime - startTime - readyDuration;
-		//    foreach (TapPointData nextPnt in tapPntQue.Values)
-		//    {
-		//        //TapPointData nextPnt = tapPntQue.Peek();
-		//        if (deltaTime >= nextPnt.GetAppearTime())
-		//        {
-		//            waitingForRemove.Enqueue(nextPnt.idx);
-		//            //tapPntQue.Remove(nextPnt.idx);
-		//            //tapPntQue.Dequeue();
-		//            TapPointPlane tp;
-		//            tp = Instantiate(tapPoint) as TapPointPlane;
-		//            tp.SetPos(new Vector2(nextPnt.x,GetYFromTime(nextPnt.fullScoreTime)));
-		//            tp.SetFullScoreTime(nextPnt.fullScoreTime);
-		//            tp.SetTapPointData(nextPnt);
-		//            tp.SetMusicPlayer(musicPlayer);
-		//            if (nextPnt.type == TapType.TAP_TYPE_BIG) tp.SetSize(Global.TapPointSizeBig);
-		//            if (nextPnt.type == TapType.TAP_TYPE_SMALL) tp.SetSize(Global.TapPointSizeSmall);
-		//            if (tapPntQue.ContainsKey(nextPnt.nextID))
-		//            {
-		//                TapPointData nxt;
-		//                tapPntQue.TryGetValue(nextPnt.nextID,out nxt);
-		//                tp.SetNextTapPointPos(new Vector2(nxt.x,GetYFromTime(nxt.fullScoreTime)));
-		//            }
-		//            //livingTapPnts.Add(tp);
-		//        }
-		//        else break;
-		//    }
-		//    foreach (int idx in waitingForRemove)
-		//        tapPntQue.Remove(idx);
-		//}
+		float curTime = Time.realtimeSinceStartup;
+		if (curTime > startTime + readyDuration)
+		{
+			if ((!isInGame) && !musicPlayer.IsPlaying())
+			{
+				isInGame = true;
+				gameStartTime = Time.time;
+				musicPlayer.Play();
+			}
+			scanLine.SetVisible(true);
+			//scanLine.SetPosByTime(musicPlayer.GetPlayTime());
+			scanLine.SetPosByTime(Time.time - gameStartTime);
+			float deltaTime = curTime - startTime - readyDuration;
+			//while (tapPntQue.Count>0)
+			Queue<int> waitingForRemove = new Queue<int>();
+			foreach (TapPointData nextPnt in tapPntQue.Values)
+			{
+				//TapPointData nextPnt = tapPntQue.Peek();
+				if (deltaTime >= nextPnt.GetAppearTime())
+				{
+					waitingForRemove.Enqueue(nextPnt.idx);
+					//tapPntQue.Remove(nextPnt.idx);
+					//tapPntQue.Dequeue();
+					TapPointPlane tp;
+					tp = Instantiate(tapPoint) as TapPointPlane;
+					tp.SetPos(new Vector2(nextPnt.x,GetYFromTime(nextPnt.fullScoreTime)));
+					tp.SetFullScoreTime(nextPnt.fullScoreTime);
+					tp.SetTapPointData(nextPnt);
+					tp.SetMusicPlayer(musicPlayer);
+					if (nextPnt.type == TapType.TAP_TYPE_BIG) tp.SetSize(Global.TapPointSizeBig);
+					if (nextPnt.type == TapType.TAP_TYPE_SMALL) tp.SetSize(Global.TapPointSizeSmall);
+					if (tapPntQue.ContainsKey(nextPnt.nextID))
+					{
+						TapPointData nxt;
+						tapPntQue.TryGetValue(nextPnt.nextID,out nxt);
+						tp.SetNextTapPointPos(new Vector2(nxt.x,GetYFromTime(nxt.fullScoreTime)));
+					}
+					//livingTapPnts.Add(tp);
+				}
+				else break;
+			}
+			foreach (int idx in waitingForRemove)
+				tapPntQue.Remove(idx);
+		}
 		
 		// Game Is Over
 		if (isInGame)
@@ -142,7 +186,23 @@ public class GameControler : MonoBehaviour {
 				LeaveGame("Result");
 			}
 		}
-
+		/*if (livingTapPnts.Count>0)
+		{
+			List<TapPoint> deletedItems = new List<TapPoint>();
+			foreach (TapPoint tp in livingTapPnts)
+			{
+				if (tp.tapResult!=TapResult.TAP_RESULT_UNKNOW)
+				{
+					if (tp.IsEffectFinished())
+					{
+						Destroy(tp.gameObject);
+						deletedItems.Add(tp);
+					}
+				}
+			}
+			foreach(TapPoint tp in deletedItems)
+				livingTapPnts.Remove(tp);
+		}*/
 	}
 	
 	void LeaveGame(string toScene)
@@ -191,49 +251,11 @@ public class GameControler : MonoBehaviour {
 	
 	int GetYFromTime(float time)
 	{
-		//float sweepNum = (time/Global.sweepOnceTime)/2.0f;
-		//sweepNum = sweepNum - (int)sweepNum;
-		//int pixelNum = (int)(sweepNum * Global.GamingZoneHeight*2);
-		//if (pixelNum> Global.GamingZoneHeight) 
-		//    pixelNum = 2*Global.GamingZoneHeight - pixelNum; 
-		//return pixelNum + Global.GamingZoneBottom;
-		return 0;
-	}
-	
-	public SortedList<int, TapPointData> LoadLevel(string levelDataFile)
-	{
-		SortedList<int, TapPointData> res_list = new SortedList<int, TapPointData> ();
-		
-		DataLoader levelLoader = new DataLoader();
-		
-		levelLoader.LoadData(levelDataFile);
-		
-		int lines = levelLoader.getLineCnt();
-		for (int i=1; i<lines; ++i)
-		{
-			TapPointData data = new TapPointData();
-			data.idx = levelLoader.GetGridInt(i, 0, 0);
-			if (data.idx == 0)
-				continue;
-			
-			data.fullScoreTime = levelLoader.GetGridFloat(i, 1, 0.0f);
-			data.type			= (TapType)levelLoader.GetGridInt(i, 2, 0);
-			switch (levelLoader.GetGridInt(i, 6, 0))
-			{
-			case 0:
-				data.tapPhase = TouchPhase.Began;
-				break;
-			case 1:
-				data.tapPhase = TouchPhase.Moved;
-				break;
-			default:
-				break;
-			}
-			data.x				= levelLoader.GetGridInt(i, 4, 0);
-			data.nextID			= levelLoader.GetGridInt(i, 5, 0);
-			
-			res_list.Add(data.idx, data);
-		}
-		return res_list;
+		float sweepNum = (time/Global.sweepOnceTime)/2.0f;
+		sweepNum = sweepNum - (int)sweepNum;
+		int pixelNum = (int)(sweepNum * Global.GamingZoneHeight*2);
+		if (pixelNum> Global.GamingZoneHeight) 
+			pixelNum = 2*Global.GamingZoneHeight - pixelNum; 
+		return pixelNum + Global.GamingZoneBottom;
 	}
 }
