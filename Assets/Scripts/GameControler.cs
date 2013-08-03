@@ -2,6 +2,15 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 
+public enum TapResult : int
+{
+	TAP_RESULT_UNKNOW = 0,
+	TAP_RESULT_MISS = 1,
+	TAP_RESULT_BAD = 2,
+	TAP_RESULT_GOOD = 3,
+	TAP_RESULT_PERFECT = 4
+}
+
 public enum TapType : int 
 {
 	TAP_TYPE_BIG = 0,
@@ -59,8 +68,8 @@ public class GameControler : MonoBehaviour {
 	private float		gameStartTime;
 	
 	void Start () {
-		
-		LevelInfo levelInfo = Global.GetLevelInfo(Global.GetCurrentLevelIndex());
+
+		LevelInfo levelInfo = LevelManager.GetLevelInfo(LevelManager.GetCurrentLevelIndex());
 		
 		musicPlayer	= Instantiate(musicPlayer) as MusicPlayer;
 		scanLine	= Instantiate(scanLine) as ScanLineCtrl;
@@ -150,7 +159,6 @@ public class GameControler : MonoBehaviour {
 		isInGame = false;
 		scoreLabel.SetVisible(false);
 		scanLine.SetVisible(false);
-		ScoreCalculator.ResetScore();
 		Application.LoadLevel(toScene);
 	}
 	
